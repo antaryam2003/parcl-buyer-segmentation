@@ -158,26 +158,52 @@ clients, properties, _ = load_and_clean(save=False)
 features = build_client_features(clients, properties, save=False)
 print(features.shape)
 """),
-        ("md", "## A. Customer demographics"),
+        ("md", """\
+## A. Customer demographics
+
+> Figures are written to `outputs/figures/` and linked below rather than
+> embedded in the notebook. A base64-encoded PNG lands in the `.ipynb` as a
+> single line of up to ~300,000 characters, which defeats GitHub's notebook
+> preview. Keeping the images external lets the notebook render in the
+> browser and keeps the file small enough to diff.
+"""),
         ("code", """\
-from IPython.display import Image, display
-display(Image(str(vz.fig_age_distribution(features))))
-display(Image(str(vz.fig_demographic_mix(features))))
-display(Image(str(vz.fig_geography(features))))
+for f in (vz.fig_age_distribution(features),
+          vz.fig_demographic_mix(features),
+          vz.fig_geography(features)):
+    print("wrote", f.name)
+"""),
+        ("md", """\
+![Age distribution](../outputs/figures/eda_01_age_distribution.png)
+
+![Demographic mix](../outputs/figures/eda_02_demographic_mix.png)
+
+![Geography](../outputs/figures/eda_03_geography.png)
 """),
         ("md", "## B. Buyer intent"),
         ("code", """\
-display(Image(str(vz.fig_buyer_intent(features))))
+print("wrote", vz.fig_buyer_intent(features).name)
+print()
 print(features['acquisition_purpose'].value_counts().to_string())
 print()
 print(features['loan_applied'].value_counts().to_string())
 """),
+        ("md", "![Buyer intent](../outputs/figures/eda_04_buyer_intent.png)"),
         ("md", "## C. Property behaviour"),
         ("code", """\
-display(Image(str(vz.fig_price_distribution(properties))))
-display(Image(str(vz.fig_inventory(properties))))
-display(Image(str(vz.fig_portfolio_size(features))))
+for f in (vz.fig_price_distribution(properties),
+          vz.fig_inventory(properties),
+          vz.fig_portfolio_size(features)):
+    print("wrote", f.name)
+print()
 print(properties['sale_price'].describe().to_string())
+"""),
+        ("md", """\
+![Price distribution](../outputs/figures/eda_05_price_distribution.png)
+
+![Inventory](../outputs/figures/eda_06_inventory.png)
+
+![Portfolio size](../outputs/figures/eda_07_portfolio_size.png)
 """),
         ("md", """\
 ## D. Buyer-investment relationships - the key finding
@@ -210,12 +236,18 @@ to be built on what they *transact*. That decision drives every modelling
 choice in notebook 04.
 """),
         ("code", """\
-display(Image(str(vz.fig_intent_vs_investment(features))))
 CORR = ['age','satisfaction_score','total_properties','total_investment',
         'avg_property_price','price_dispersion','avg_floor_area','total_area',
         'avg_price_per_sqft','unique_towers','active_months',
         'purchase_span_days','office_share']
-display(Image(str(vz.fig_correlation_heatmap(features, CORR))))
+for f in (vz.fig_intent_vs_investment(features),
+          vz.fig_correlation_heatmap(features, CORR)):
+    print("wrote", f.name)
+"""),
+        ("md", """\
+![Intent vs investment](../outputs/figures/eda_08_intent_vs_investment.png)
+
+![Correlation heatmap](../outputs/figures/eda_09_correlation.png)
 """),
     ],
 
@@ -242,10 +274,19 @@ print(behaviour.shape)
 behaviour.head()
 """),
         ("code", """\
+# Mirrors run_pipeline.py exactly, including the label-encoded columns, so
+# re-running this notebook reproduces the committed artefact rather than
+# overwriting it with a narrower table.
+from src.preprocessing import label_encode
+
 features = build_client_features(clients, properties)
+features, encoders = label_encode(features)
+features.to_csv(cfg.CLIENT_FEATURES, index=False)
+
 print("client feature table:", features.shape)
 print("units aggregated  :", int(features['total_properties'].sum()), "(expect 7,305)")
 print("capital aggregated: $%s" % format(features['total_investment'].sum(), ',.2f'))
+print("label-encoded columns:", [c for c in features.columns if c.endswith('_code')])
 feature_dictionary()
 """),
         ("md", "## Distributions and redundancy"),
@@ -373,9 +414,11 @@ X, names, pre = build_matrix(features, FEATURE_SETS[fs_name], scaler)
 scan = scan_k(X)
 display(scan.round(4))
 print("elbow K =", elbow_k(scan['k'].tolist(), scan['inertia'].tolist()))
-from IPython.display import Image, display as disp
-disp(Image(str(vz.fig_elbow_silhouette(scan, k))))
+print("wrote", vz.fig_elbow_silhouette(scan, k).name)
 """),
+        ("md",
+         "![Elbow and silhouette]"
+         "(../outputs/figures/model_01_elbow_silhouette.png)"),
         ("md", "## Final fit, stability and hierarchical validation"),
         ("code", """\
 km = fit_kmeans(X, k)
@@ -392,8 +435,9 @@ hier, Z, ccc = fit_hierarchical(X, k)
 print(f"Ward linkage, cophenetic correlation {ccc:.3f}")
 print("hierarchical sizes:", np.bincount(hier).tolist())
 print("agreement with K-Means:", {a: round(b, 3) for a, b in compare_partitions(labels, hier).items()})
-disp(Image(str(vz.fig_dendrogram(Z, k, ccc))))
+print("wrote", vz.fig_dendrogram(Z, k, ccc).name)
 """),
+        ("md", "![Dendrogram](../outputs/figures/model_03_dendrogram.png)"),
     ],
 
     "05_cluster_interpretation": [
@@ -451,16 +495,25 @@ demographics say nothing about purchasing.
 """),
         ("md", "## Visual summary"),
         ("code", """\
-from IPython.display import Image, display as disp
-coords, pca = pca_projection(X, 2)
-disp(Image(str(vz.fig_pca_scatter(coords, labels, seg_names, pca))))
-disp(Image(str(vz.fig_segment_sizes(profile))))
 FINGERPRINT = ['total_properties','total_investment','avg_property_price',
                'avg_floor_area','total_area','unique_towers','active_months',
                'purchase_span_days','price_dispersion','office_share',
                'age','satisfaction_score']
-disp(Image(str(vz.fig_segment_fingerprint(profile, features, FINGERPRINT))))
-disp(Image(str(vz.fig_segment_geography(segmented))))
+coords, pca = pca_projection(X, 2)
+for f in (vz.fig_pca_scatter(coords, labels, seg_names, pca),
+          vz.fig_segment_sizes(profile),
+          vz.fig_segment_fingerprint(profile, features, FINGERPRINT),
+          vz.fig_segment_geography(segmented)):
+    print("wrote", f.name)
+"""),
+        ("md", """\
+![PCA scatter](../outputs/figures/model_02_pca_scatter.png)
+
+![Segment sizes](../outputs/figures/model_04_segment_sizes.png)
+
+![Segment fingerprint](../outputs/figures/model_05_segment_fingerprint.png)
+
+![Segment geography](../outputs/figures/model_06_segment_geography.png)
 """),
         ("md", "## Business recommendations"),
         ("code", """\
