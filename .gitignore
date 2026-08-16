@@ -1,0 +1,31 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Working copies of the source data live in data/ and docs/; these
+# root-level originals are byte-identical duplicates and are not committed.
+/clients.csv
+/properties.csv
+/Machine learning based Buyer Segmentation and Investment Profiling for Real Estate Market Intelligence.pdf
+
+# Documents kept locally but deliberately not published to the repository.
+# The research paper is distributed through the submission link rather than
+# from here; the brief and the video script are working documents.
+/docs/PRD.pdf
+/docs/VIDEO_SCRIPT.md
+/docs/research_paper.md
+/docs/research_paper.pdf
+/docs/research_paper.html

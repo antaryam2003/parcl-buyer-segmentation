@@ -1,0 +1,12 @@
+# Runtime dependencies for the analysis pipeline and the Streamlit dashboard.
+# Lower bounds only, so the project installs cleanly on Streamlit Community
+# Cloud as well as locally. Developed against pandas 3.0 / scikit-learn 1.9.
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+scipy>=1.13
+matplotlib>=3.9
+seaborn>=0.13
+plotly>=5.24
+streamlit>=1.49
+joblib>=1.4

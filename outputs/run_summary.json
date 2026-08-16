@@ -1,0 +1,86 @@
+{
+  "cleaning": {
+    "clients_rows_in": 2000,
+    "clients_rows_out": 2000,
+    "clients_missing_cells": 0,
+    "clients_duplicate_rows": 0,
+    "clients_duplicate_ids": 0,
+    "properties_rows_in": 10000,
+    "properties_rows_out": 10000,
+    "properties_duplicate_rows": 0,
+    "properties_duplicate_ids": 0,
+    "properties_missing_client_ref": 2695,
+    "missing_ref_all_available": true,
+    "orphan_client_refs": 0,
+    "clients_with_purchase": 2000,
+    "labels_normalised": 0,
+    "dob_unparsed": 0,
+    "dob_ambiguous_rows": 855,
+    "price_unparsed": 0,
+    "transaction_min": "2024-01-01",
+    "transaction_max": "2025-12-01"
+  },
+  "cleaning_notes": [
+    "Referential integrity holds: every client_ref resolves to a client_id.",
+    "All clients appear in the sold-property table, so behavioural features are available for the entire client base.",
+    "Missing client_ref values coincide exactly with listing_status='Available'; they encode unsold stock, not missing data, and are excluded from client aggregation rather than imputed.",
+    "855 date_of_birth values have both leading components <= 12 and are day/month ambiguous. Age is measured on 31-Dec-2025, where age reduces to (2025 - birth_year), so the ambiguity has no effect on any downstream feature."
+  ],
+  "n_clients": 2000,
+  "n_properties": 10000,
+  "units_sold": 7305,
+  "total_capital": 2520750960.84,
+  "model": {
+    "feature_set": "behaviour_wide",
+    "scaler": "standard",
+    "k": 4,
+    "n_model_features": 10,
+    "model_features": [
+      "total_properties",
+      "total_investment",
+      "avg_property_price",
+      "price_dispersion",
+      "office_share",
+      "purchase_span_days",
+      "avg_floor_area",
+      "total_area",
+      "unique_towers",
+      "active_months"
+    ],
+    "silhouette": 0.2280404101368682,
+    "davies_bouldin": 1.274469839460123,
+    "calinski_harabasz": 618.7579098387553,
+    "elbow_k": 5,
+    "behavioural_separation": 0.3737662096652268,
+    "flag_redundancy": 0.0020033275983250957,
+    "pca_explained": [
+      0.4278971911207806,
+      0.25401395764229245
+    ],
+    "stability": {
+      "mean_ari": 0.9138984499172641,
+      "std_ari": 0.1543532157093307,
+      "min_ari": 0.30101900759630645,
+      "n_runs": 100
+    },
+    "hierarchical": {
+      "cophenetic_correlation": 0.4071268224238986,
+      "adjusted_rand": 0.5730591513936105,
+      "adjusted_mutual_info": 0.6143953148794389
+    },
+    "segments": {
+      "3": "Portfolio Accumulators",
+      "0": "Large-Format Premium Buyers",
+      "2": "Value-Tier Buyers",
+      "1": "Core Multi-Unit Investors"
+    },
+    "rejected_winner": {
+      "feature_set": "behaviour_demo_flags",
+      "scaler": "minmax",
+      "k": 6,
+      "silhouette": 0.3246014348225605,
+      "flag_redundancy": 0.8963998756905737,
+      "behavioural_separation": 0.002903535553241757
+    }
+  }
+}

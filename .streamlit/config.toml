@@ -1,0 +1,17 @@
+[theme]
+# The dashboard pins a light theme on purpose. The four-segment categorical
+# palette was validated for colour-vision separation against a light chart
+# surface; no four-hue set clears the same all-pairs gates against a dark
+# surface, so the app commits to one validated look that also matches the
+# figures in the research paper.
+base = "light"
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f0efec"
+textColor = "#0b0b0b"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

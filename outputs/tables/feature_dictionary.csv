@@ -1,0 +1,22 @@
+group,feature,description
+behavioural,total_properties,Number of units purchased (purchase frequency)
+behavioural,total_investment,"Total capital deployed, USD"
+behavioural,avg_property_price,"Mean ticket size per unit, USD"
+behavioural,max_property_price,"Largest single purchase, USD"
+behavioural,price_dispersion,Std. dev. of ticket size (0 for single buyers)
+behavioural,avg_floor_area,"Mean unit size, sq ft"
+behavioural,total_area,"Total floor area acquired, sq ft"
+behavioural,avg_price_per_sqft,"Mean unit price intensity, USD/sq ft"
+behavioural,unique_towers,Distinct towers bought into (diversification)
+behavioural,tower_diversity,"unique_towers / total_properties, 0-1"
+behavioural,office_share,"Share of units that are offices, 0-1"
+behavioural,apartment_share,"Share of units that are apartments, 0-1"
+behavioural,purchase_span_days,Days between first and last purchase
+behavioural,active_months,Distinct months with at least one purchase
+behavioural,purchase_intensity,Purchases per active month
+demographic,age,Age in whole years at 31-Dec-2025
+demographic,satisfaction_score,"Self-reported satisfaction, 1-5"
+demographic,is_company,1 if client_type is Company
+demographic,loan_flag,1 if the client applied for financing
+demographic,is_investment,1 if acquisition_purpose is Investment
+demographic,is_domestic,1 if country is USA (the home market)

@@ -1,0 +1,7 @@
+# Additional tooling for regenerating the notebooks and the research paper.
+# Not needed to run the pipeline or the dashboard.
+-r requirements.txt
+jupyter>=1.1
+nbformat>=5.10
+nbconvert>=7.16
+markdown>=3.6
